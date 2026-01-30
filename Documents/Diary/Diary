@@ -1,0 +1,18 @@
+30/1/2026: Setting up gitlab, made an outline for my project outline(still have no idea how to go about this yet tho), did research the other day this is what i have wrote in my notes app: Minecraft: It is a sandbox game that has no goals. Players can be as creative as they want
+by building or going on a mining adventure to get more materials. There are many creatures to befriend 
+in this game to have as a compainion or in a farm and many hostile mobs to fight away at night. There are villigers in the 
+overworld to trade with as well as a new world called the Nether players can go to for new materials and trade with piglen creatures.
+Players can enhance this game by adding mods to add even more items and creatures to have a more fun expirence
+https://www.minecraft.net/en-us/article/what-minecraft
+Spigot or Paper server: Spigot is a minecraft server creation software. It is a fork of Bukkit and allow for server plugins. Paper is another server software
+which has an expanding a plugin API. It is based on Spigot but designed to improve performance and allows more advanced features. 
+https://www.spigotmc.org/ https://www.spigotmc.org/threads/what-is-spigot.358199/#:~:text=Long%20story%20short.,its%20just%20good%20business%20practice.
+https://papermc.io https://papermc.io/software/paper/
+Bukkit API: Bukkit is an open source software to extend Minecraft servers. Bukkits aim is to make managing and creating servers 
+easier and providing more flexability. Also focuses on performance, ease, and customization.
+https://dev.bukkit.org https://bukkit.fandom.com/wiki/Main_Page
+Citizens2 API: Citizens2 is a server plugin that allows players to create NPCs to help enhance gameplay and functionality. 
+Citizens2 has an API for working with these NPCs and uses Maven and Java. 
+https://wiki.citizensnpcs.co/Citizens_Wiki
+Gitlab: to put my assignment in 
+write code in intellij since its java
