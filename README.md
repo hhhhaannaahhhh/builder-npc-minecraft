@@ -1,6 +1,6 @@
 # Builder NPC in Minecraft
 Author: Hannah Frick (haf31)  
-Supervisor: Jim Finni(jcf12)  
+Supervisor: Jim Finnis(jcf12)  
 Degree Scheme:Computer Science    
 Degree Code:G400  
 Module Code: CS39440
