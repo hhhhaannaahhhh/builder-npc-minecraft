@@ -1,0 +1,5 @@
+name: TesterNPC
+version: 1.0
+main: me.test.TesterNPCPlugin
+api-version: "1.21"
+depend: [Citizens]
