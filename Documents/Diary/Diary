@@ -22,3 +22,6 @@ write code in intellij since its java
 
 10/02/2026: set up a server in paper and it runs perfect. installed citizens2 and used /npc create jeff to make sure that was working fine 
 everything runs smoothly now. still need to figure out how to make schematics for my buildings that i need. need to also write a proper test citizen to make sure it can actually do things other then just stand around 
+
+19/02/2026: wrote my tester npc and startd on writing my actual npc this week, lifecycle in maven makes the jar file that i need to add into my server. still looking into how to make and add schematics npc not walking how its meant to but it does spawn in the npc i'll probably just build off the tester to make my main builder guy
+
