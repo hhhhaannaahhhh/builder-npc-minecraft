@@ -21,4 +21,4 @@ write code in intellij since its java
 09/02/2026: Finished my project outline report slay got my new pc setup this morning it looks sexy excited to start building my project tomorrow with it
 
 10/02/2026: set up a server in paper and it runs perfect. installed citizens2 and used /npc create jeff to make sure that was working fine 
-everything runs smoothly now. still need to figure out how to make schematics for my buildings that i need. need to also write a proper test citizen to make sure it can actually do things other then just stand around 
+everything runs smoothly now. still need to figure out how to make schematics for my buildings that i need. need to also write a proper NPC citizen to make sure it can actually do things other then just stand around

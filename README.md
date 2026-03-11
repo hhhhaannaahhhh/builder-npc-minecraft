@@ -9,8 +9,8 @@ Module Code: CS39440
 # Beginning project tasks
 Setup a Minecraft server 
 Install the Citizens2 plugin
-Learn the basics of the Bukkit API and write a test plugin. 
-Learn the basics of the Citizens2 API and write a test citizen
+Learn the basics of the Bukkit API and write a NPC plugin. 
+Learn the basics of the Citizens2 API and write a NPC citizen
 Write a new Citizen
 Make it search for and move to flat areas of land
 Work out how to store a blueprint for a small building
