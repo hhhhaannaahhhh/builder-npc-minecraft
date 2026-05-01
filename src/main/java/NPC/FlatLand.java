@@ -34,6 +34,20 @@ public class FlatLand {
     private ArrayDeque<Location> flatSpot = new ArrayDeque<>();
     private Location target = null;
     private boolean search = false;
+    private int targetTicks = 0;
+
+    /**
+     * Creates a flat land search object
+     * @param npcPlugin the plugin instance, used to run scheduled Buk
+     * @param npc the Citizens NPC that will move to the selected flat area
+     * @param spawn the center location where move to the selected flat area
+     * @param width the width of the building
+     * @param length the length of the building
+     * @param radius the maximum distance from the center location
+     * @param tolerance the height difference across the area 0 means flat
+     * @param step number of blocks to move between search checks
+     */
+
 
     public FlatLand(Plugin npcPlugin,
             NPC npc,
@@ -51,8 +65,13 @@ public class FlatLand {
         this.radius = radius;
         this.tolerance = tolerance;
         this.step = Math.max(1, step); // cannot have 0
-    }
 
+
+
+    }
+    /**
+     *Builds a queue of possible flat locations around the center
+     */
     //nearest first search using a grid scan
     private void buildSpot() {
         World world = spawn.getWorld();
@@ -104,6 +123,11 @@ public class FlatLand {
             }
         }
     }
+
+    /**
+     * Start the flat land search
+     * @param landFound callback that receives the final build location
+     */
     // starts search loop
     public void startSearch(Consumer<Location> landFound){
         search = true;
@@ -121,6 +145,7 @@ public class FlatLand {
                     // valid spot to avoid npc confusion
                     if (flatArea(candidate)) {
                         target = candidate;
+                        targetTicks= 0;
                         npc.getNavigator().setTarget(target);
                         return;
                     }
@@ -131,17 +156,39 @@ public class FlatLand {
                 return;
             }
 
-            if(npcLocation.distance(target) > 1.0){
+            targetTicks++;
+
+            if (npcLocation.distance(target) > 1.0) {
+                if (targetTicks > 120) { // about 60 seconds because task runs every 10 ticks
+                    npc.getNavigator().cancelNavigation();
+                    target = null;
+                    targetTicks = 0;
+                }
                 return;
             }
-
+            if (flatArea(target)) {
                 npc.getNavigator().cancelNavigation();
                 search = false;
-                Location buildSpot = getBuildSpot(target);
-                landFound.accept(buildSpot);
+
+                Location buildOrigin = getBuildSpot(target);
+                landFound.accept(buildOrigin);
+
+                task.cancel();
+                task = null;
+                return;
+            }
             target = null;
+
         }, 1L, 10L);
     }
+
+    /**
+     * finds the highest solid block at a x and z coordinate
+     * @param world the world being searched
+     * @param x x coordinate to check
+     * @param z z coordinate to check
+     * @return y coordinate of the highest solid block or the world min height
+     */
     //find y of top solid block
     private int actualGround(World world, int x, int z){
         int y = world.getHighestBlockYAt(x, z);
@@ -159,6 +206,11 @@ public class FlatLand {
         return minY;
         }
 
+    /**
+     * heks if a location has enough flat land for the building
+     * @param location center location of the area
+     * @return true if the area is flat and suitable for building
+     */
 // makes sure the area is perfectly flat
     private boolean flatArea(Location location) {
         World world = location.getWorld();
@@ -200,19 +252,43 @@ public class FlatLand {
         return true;
     }
 
+    /**
+     * Converts the accepted center loation into the corner where the schemiatic starts
+     * @param location the accepted center location of the flat area
+     * @return the block location where the schematic should begin
+     */
     // finds the corner of the flat land so there can be a building
-    private Location getBuildSpot(Location location){
+    private Location getBuildSpot(Location location) {
         World world = location.getWorld();
         int x = location.getBlockX();
         int z = location.getBlockZ();
+
         int halfWidth = width / 2;
-        int halfLength= length /2;
-        // corner
+        int halfLength = length / 2;
+
         int cornerX = x - halfWidth;
         int cornerZ = z - halfLength;
+
         int y = actualGround(world, cornerX, cornerZ);
-        //y isnt y+1 so building can touch the ground
-        return new Location(world, cornerX + 0.5, y, cornerZ + 0.5);
+
+        return new Location(world, cornerX + 0.5, y + 1, cornerZ + 0.5);
+    }
+
+    /**
+     * Stops the current search and clears all stored search data
+     */
+    public void stop(){
+        search = false;
+        target = null;
+        flatSpot.clear();
+
+        if (task != null){
+            task.cancel();
+            task = null;
+        }
+        if (npc != null){
+            npc.getNavigator().cancelNavigation();
+        }
     }
 
 }

@@ -11,9 +11,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
- * Bukkit Plugin class
- * Creates the npc, registers player chat events, attaches the builder trait to the npc
+ * Main Bukkit Plugin class
+ * Creates the npc named Jeff, registers player chat events,
+ * attaches the Citizens2 builder trait to the npc,and passes the schematics
+ *
  * @author haf31
  */
 
@@ -22,12 +28,13 @@ public class Plugin extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        getDataFolder().mkdirs();
+        getDataFolder().mkdirs(); // create plugin folder
         //makes sure event methods can run
         Bukkit.getPluginManager().registerEvents(this, this);
 
-    World world = Bukkit.getWorlds().get(0); // get world
-    Location spawn = world.getSpawnLocation().clone().add(0, 1,0 ); // get spawn
+        // get world n put jeff at spawn
+    World world = Bukkit.getWorlds().get(0);
+    Location spawn = world.getSpawnLocation().clone().add(0, 1,0 );
         //register citizens trait
         CitizensAPI.getTraitFactory().registerTrait(
                 TraitInfo.create(Builder.class).withName("builder")
@@ -51,27 +58,56 @@ public class Plugin extends JavaPlugin implements Listener {
         npc.getOrAddTrait(Builder.class);
 
 }
-@EventHandler
+
+    /**
+     * Handles player chats and uses them as commands
+     * The player can type schematics to list all avalible,
+     * The schematic name to start the flat land search,
+     * then build to build the schematic
+     *
+     * @param event the chat event for the players messages
+     */
+    @EventHandler
 //method runs when a player sends a chat message
 public void playerChat(AsyncPlayerChatEvent event){
         String message = event.getMessage();
         //when player types search or Search it'll still run
-        if(!message.equalsIgnoreCase("search") && !message.equalsIgnoreCase("build")) return;
+
         Bukkit.getScheduler().runTask(this, () -> {
-            event.getPlayer().sendMessage("Starting search");
+            //attach trait to npc and run search
+            Builder trait = npc.getOrAddTrait(Builder.class);
+
+            // list schematics
+            if (message.equalsIgnoreCase("schematics")){
+                event.getPlayer().sendMessage(listSchematics());
+                return;
+            }
+            if (message.equalsIgnoreCase("build")){
+                trait.build(this);
+                return;
+            }
 
             //have the search center be the spawn
             Location spawnCenter = Bukkit.getWorlds().get(0).getSpawnLocation().clone().add(0,1,0);
 
             // set the npc navigator biggger for a larger radius
             npc.getNavigator().getLocalParameters().range(400);
-            //attach trait to npc and run search
-            Builder trait = npc.getOrAddTrait(Builder.class);
+            npc.getNavigator().cancelNavigation();
+            trait.setSchematic(message);
             trait.startSearch(this, spawnCenter, buildLocation -> {
                 event.getPlayer().sendMessage("Flat land found at: "+ buildLocation.getBlockX() + " " + buildLocation.getBlockY() + " " + buildLocation.getBlockZ() );
             });
-            trait.build(this);
         });
 
 }
+        private String listSchematics(){
+        // get schematic folder
+            File dir = new File(getDataFolder(), "schematics");
+            // get all files ending with .txt
+            File [] file = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".txt"));
+            // turn file list into the schematic names
+            String names = Arrays.stream(file).map(File::getName).sorted().collect(Collectors.joining(", "));
+        // Send the schematic list back to the player
+            return "Schematics:" + names + " Type a name without .txt to search, then type build";
+        }
  }
